@@ -91,7 +91,7 @@ export const usePlayback = create<PlaybackStore>((set, get) => {
     activeEventId: null,
     selectedEvent: initialTimeline.events[0] || null,
     audioPreset: 'pure',
-    comparisonMode: 'differences',
+    comparisonMode: 'gene_a',
     error: null,
     loading: false,
     activePosition: 1,
@@ -134,7 +134,7 @@ export const usePlayback = create<PlaybackStore>((set, get) => {
         alignment: comp.alignment,
         activePosition: comp.differences[0]?.position || 1,
         selectedEvent: tlA.events[0] || null,
-        comparisonMode: 'differences',
+        comparisonMode: 'gene_a',
         currentTime: 0,
       })
     },

@@ -264,12 +264,13 @@ export class AudioEngine {
     const scheduleUntil = currentTime + LOOK_AHEAD
 
     for (const ev of tl.events) {
+      // Skip events we've already scheduled past
+      if (ev.start_time < this.scheduledUpTo) continue
+      // Stop when we've passed the look-ahead window
+      if (ev.start_time >= scheduleUntil) break
+
       const evEnd = ev.start_time + ev.duration
-      if (
-        ev.start_time < scheduleUntil &&
-        evEnd > currentTime &&
-        ev.start_time >= this.scheduledUpTo
-      ) {
+      if (evEnd > currentTime) {
         if (this.comparisonMode === 'differences') {
           if (this.differencePositions.has(ev.position)) {
             this.scheduleEvent(ev, true)
@@ -278,10 +279,11 @@ export class AudioEngine {
           const isDiff = this.differencePositions.has(ev.position)
           this.scheduleEvent(ev, isDiff)
         }
-
-        this.scheduledUpTo = ev.start_time
       }
     }
+
+    // Advance the scheduling cursor to the current look-ahead boundary
+    this.scheduledUpTo = scheduleUntil
 
     if (currentTime >= tl.total_duration && tl.total_duration > 0) {
       this.isPlaying = false

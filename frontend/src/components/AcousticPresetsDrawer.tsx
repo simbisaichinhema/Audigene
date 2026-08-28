@@ -16,6 +16,7 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
     const sampleSeq = parseFasta(p.sample).sequence
     loadTimeline(refSeq, method)
     loadComparisonTimeline(sampleSeq)
+    usePlayback.getState().setComparisonMode('gene_a')
     onClose()
     setTimeout(() => {
       usePlayback.getState().play()
