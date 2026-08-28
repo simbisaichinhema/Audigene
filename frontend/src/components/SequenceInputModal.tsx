@@ -186,13 +186,12 @@ export default function SequenceInputModal({ open, onClose }: Props) {
           >
             <span>📂</span> UPLOAD FROM PC (.FASTA / .TXT)
           </button>
-          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94a3b8', margin: '0 4px' }}>| PRESETS:</span>
-          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', margin: '0 4px', flexShrink: 0 }}>| ACOUSTIC PRESETS:</span>
+          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', margin: '0 4px', flexShrink: 0 }}>| GENE VARIANTS:</span>
           {ACOUSTIC_DNA_PRESETS.map((p) => (
             <button
               key={p.id}
               onClick={() => handleLoadPreset(p)}
-              title={`${p.name} — ${p.description}`}
+              title={`${p.name} — ${p.gene} | ${p.locus}`}
               style={{
                 whiteSpace: 'nowrap', padding: '5px 12px',
                 borderRadius: 20, border: '1px solid #bfdbfe',
@@ -206,7 +205,7 @@ export default function SequenceInputModal({ open, onClose }: Props) {
             >
               <span>{p.icon}</span>
               <span>{p.name}</span>
-              <span style={{ opacity: 0.8, fontSize: '0.58rem', fontWeight: 700, color: '#0284c7' }}>({p.acousticProfile})</span>
+              <span style={{ opacity: 0.8, fontSize: '0.58rem', fontWeight: 700, color: '#0284c7' }}>({p.locus})</span>
             </button>
           ))}
         </div>

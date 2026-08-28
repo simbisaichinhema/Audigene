@@ -182,10 +182,10 @@ export default function SequenceAlignment() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span>🎵</span> ACOUSTIC SOUND PRESETS (TAP TO PLAY INSTANTLY)
+              <span>🧬</span> GENOMIC VARIANT PRESETS (TAP TO SONIFY & ANALYZE)
             </span>
             <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#2563eb' }}>
-              ⚡ Plays Sound Immediately
+              ⚡ Instant Sonification
             </span>
           </div>
 
@@ -197,7 +197,7 @@ export default function SequenceAlignment() {
                 <button
                   key={p.id}
                   onClick={() => handleSelectPreset(p)}
-                  title={`${p.name} — ${p.description}`}
+                  title={`${p.name} — ${p.gene} | ${p.locus}`}
                   style={{
                     flexShrink: 0,
                     padding: '6px 12px',
@@ -218,7 +218,7 @@ export default function SequenceAlignment() {
                   <span>{p.icon}</span>
                   <span>{p.name}</span>
                   <span style={{ opacity: isActive ? 0.95 : 0.75, fontSize: '0.58rem', fontWeight: 700 }}>
-                    ({p.acousticProfile})
+                    ({p.locus})
                   </span>
                 </button>
               )

@@ -158,14 +158,14 @@ export default function QuickActions() {
       {/* ── Acoustic DNA Sample Presets Quick Switch Bar ── */}
       <div style={{ marginTop: 12, borderTop: '1px solid #e2e8f0', paddingTop: 8 }}>
         <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#1e293b', marginBottom: 6, letterSpacing: '0.04em' }}>
-          ACOUSTIC DNA SAMPLE PRESETS (CLICK TO PLAY DIVERSE SOUND PROFILES)
+          GENOMIC VARIANT PRESETS (TAP TO SONIFY & ANALYZE)
         </div>
         <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, WebkitOverflowScrolling: 'touch' }}>
           {ACOUSTIC_DNA_PRESETS.map((p) => (
             <button
               key={p.id}
               onClick={() => handleSelectPreset(p)}
-              title={`${p.name} — ${p.description}`}
+              title={`${p.name} — ${p.gene}`}
               style={{
                 flexShrink: 0,
                 padding: '5px 10px',

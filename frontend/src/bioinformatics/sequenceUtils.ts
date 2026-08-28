@@ -11,8 +11,12 @@ export const NUCLEOTIDE_MAP: Record<string, { pitch: string; freq: number }> = {
 export interface DnaPreset {
   id: string
   name: string
-  acousticProfile: string
-  description: string
+  gene: string
+  organism: string
+  locus: string
+  mutationType: string
+  clinicalSignificance: string
+  biologicalFunction: string
   icon: string
   ref: string
   sample: string
@@ -20,49 +24,69 @@ export interface DnaPreset {
 
 export const ACOUSTIC_DNA_PRESETS: DnaPreset[] = [
   {
-    id: 'hbs',
-    name: 'Sickle Cell Mutation',
-    acousticProfile: 'Harmonic Point Mutation',
-    description: 'Mid-range harmonic chord with a single sharp substitution pitch at Position #17.',
+    id: 'hbb_sickle',
+    name: 'HBB — Sickle Cell Disease',
+    gene: 'HBB (Hemoglobin Subunit Beta)',
+    organism: 'Homo sapiens',
+    locus: 'Chr 11p15.4',
+    mutationType: 'Missense (E6V) — GAG→GTG substitution',
+    clinicalSignificance: 'Pathogenic — causes Sickle Cell Anemia (OMIM #603903)',
+    biologicalFunction: 'Encodes beta-globin chain of hemoglobin; critical for oxygen transport in erythrocytes. E6V mutation causes hemoglobin polymerization under low O₂.',
     icon: '🩸',
-    ref: '>Reference_HbA\nATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGTTGGTATCAAGGTTACAAGACAGGTTTAAGGAGACCAATAG',
-    sample: '>Sample_HbS\nATGGTGCACCTGACTCCTGTGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGTTGGTATCAAGGTTACAAGACAGGTTTAAGGAGACCAATAG',
+    ref: '>HBB_Reference_HbA | Homo sapiens | Chr11p15.4 | NM_000518.5\nATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGTTGGTATCAAGGTTACAAGACAGGTTTAAGGAGACCAATAG',
+    sample: '>HBB_Variant_HbS | E6V_Sickle | rs334\nATGGTGCACCTGACTCCTGTGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGGTTGGTATCAAGGTTACAAGACAGGTTTAAGGAGACCAATAG',
   },
   {
-    id: 'at_high',
-    name: 'High Pitch Treble (AT-Rich)',
-    acousticProfile: 'High Notes & Rapid Staccato',
-    description: 'High frequency C5 & C4 notes (523 Hz & 262 Hz) creating bright, sparkling high-pitch melodies.',
-    icon: '✨',
-    ref: '>AT_Rich_Melodic_High\nATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTATATATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTATATATATATAAAAATTTT',
-    sample: '>AT_Rich_Variant\nATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTGTATATATATAAAAATTTTATTTTATATATATATATAAAAATTTTATTTTATATATATATAAAAATTTTCTTTTATATATATATAAAAATTTT',
+    id: 'brca1_exon',
+    name: 'BRCA1 — Breast Cancer Susceptibility',
+    gene: 'BRCA1 (BRCA1 DNA Repair Associated)',
+    organism: 'Homo sapiens',
+    locus: 'Chr 17q21.31',
+    mutationType: 'Frameshift deletion — 185delAG',
+    clinicalSignificance: 'Pathogenic — high-risk hereditary breast/ovarian cancer (OMIM #113705)',
+    biologicalFunction: 'Tumor suppressor involved in DNA double-strand break repair via homologous recombination. Loss of function disrupts genomic stability and cell cycle checkpoint control.',
+    icon: '🧬',
+    ref: '>BRCA1_Exon2_Reference | Homo sapiens | Chr17q21.31 | NM_007294.4\nATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAGTGCACTTCCTGAAAATCGATATTTTATCTGCTCTTCGCGTTGAAGAAGTACAAAGTGCACTTCCTGAAAATCGATATTTTATCTGCTCTTCGCGTTGAA',
+    sample: '>BRCA1_185delAG_Variant | Ashkenazi_founder | rs80357914\nATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAGTGCCTTCCTGAAAATCGATATTTTATCTGCTCTTCGCGTTGAAGAAGTACAAAGTGCACTTCCTGAAAATCGATATTTTATCTGCTCTTCGCGTTGAA',
   },
   {
-    id: 'gc_low',
-    name: 'Deep Bass (GC-Rich Island)',
-    acousticProfile: 'Low Bass & Heavy Tones',
-    description: 'Low frequency G4 & E4 notes (392 Hz & 330 Hz) producing deep, warm, heavy synth tones.',
-    icon: '🎸',
-    ref: '>GC_Rich_Low_Bass\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGG',
-    sample: '>GC_Rich_Variant\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGAGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGG',
+    id: 'tp53_hotspot',
+    name: 'TP53 — Li-Fraumeni Tumor Suppressor',
+    gene: 'TP53 (Tumor Protein P53)',
+    organism: 'Homo sapiens',
+    locus: 'Chr 17p13.1',
+    mutationType: 'Missense (R248W) — CGG→TGG substitution',
+    clinicalSignificance: 'Pathogenic — Li-Fraumeni Syndrome, somatic driver in >50% of cancers (OMIM #191170)',
+    biologicalFunction: 'Master tumor suppressor regulating cell cycle arrest, apoptosis, and DNA repair. R248W is a gain-of-function hotspot mutation in the DNA-binding domain, disrupting transcriptional activation of target genes.',
+    icon: '🛡️',
+    ref: '>TP53_Exon7_Reference | Homo sapiens | Chr17p13.1 | NM_000546.6\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAC',
+    sample: '>TP53_R248W_Variant | Somatic_Hotspot | rs28934578\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTATATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAC',
   },
   {
-    id: 'scale',
-    name: 'Symphonic Scale (Kinase)',
-    acousticProfile: 'Wide Dynamic Range Melody',
-    description: 'Sweeping 4-octave bio-scale cycling through low C, mid E/G, and high T notes.',
-    icon: '🎼',
-    ref: '>Insulin_Kinase_Scale\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAC',
-    sample: '>Insulin_Kinase_Variant\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTATATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAC',
+    id: 'htt_expansion',
+    name: 'HTT — Huntington Disease CAG Repeat',
+    gene: 'HTT (Huntingtin)',
+    organism: 'Homo sapiens',
+    locus: 'Chr 4p16.3',
+    mutationType: 'Trinucleotide repeat expansion — CAG ×45 (normal ≤35)',
+    clinicalSignificance: 'Pathogenic — Huntington Disease, autosomal dominant neurodegeneration (OMIM #143100)',
+    biologicalFunction: 'Encodes huntingtin protein essential for neuronal function and intracellular transport. CAG expansion (>36 repeats) produces polyglutamine tract causing toxic protein aggregation in striatal neurons.',
+    icon: '🧠',
+    ref: '>HTT_Exon1_Normal | Homo sapiens | Chr4p16.3 | NM_002111.8 | CAG×25\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
+    sample: '>HTT_Exon1_Expanded | Pathogenic | CAG×52\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
   },
   {
-    id: 'cag_repeat',
-    name: 'Trinucleotide Cascade (CAG)',
-    acousticProfile: 'Rhythmic Cadence & Repeats',
-    description: 'Hypnotic CAG triplet oscillation highlighting frameshifts and sequence length expansion.',
-    icon: '⚡',
-    ref: '>Huntington_CAG_Normal\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
-    sample: '>Huntington_CAG_Expanded\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
+    id: 'egfr_lung',
+    name: 'EGFR — Non-Small Cell Lung Cancer',
+    gene: 'EGFR (Epidermal Growth Factor Receptor)',
+    organism: 'Homo sapiens',
+    locus: 'Chr 7p11.2',
+    mutationType: 'In-frame deletion — Exon 19 del (ΔE746-A750)',
+    clinicalSignificance: 'Oncogenic driver — NSCLC therapeutic target for TKIs (Erlotinib, Gefitinib) (OMIM #131550)',
+    biologicalFunction: 'Transmembrane receptor tyrosine kinase driving cell proliferation via RAS-MAPK and PI3K-AKT pathways. Exon 19 deletion constitutively activates kinase domain, promoting uncontrolled epithelial cell growth.',
+    icon: '🫁',
+    ref: '>EGFR_Exon19_Reference | Homo sapiens | Chr7p11.2 | NM_005228.5\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGG',
+    sample: '>EGFR_Exon19del_Variant | delE746-A750 | Somatic\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGAGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGG',
   },
 ]
 

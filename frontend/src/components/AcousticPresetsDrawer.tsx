@@ -57,13 +57,13 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
           justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '1.4rem' }}>🎵</span>
+            <span style={{ fontSize: '1.4rem' }}>🧬</span>
             <div>
               <div style={{ fontWeight: 900, fontSize: '1rem', letterSpacing: '0.02em' }}>
-                ACOUSTIC DNA PRESETS
+                GENOMIC VARIANT LIBRARY
               </div>
               <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 600 }}>
-                Select a bio-acoustic profile to load & play instantly
+                Select a clinically annotated gene variant to sonify & analyze
               </div>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
 
         {/* List of Presets */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {ACOUSTIC_DNA_PRESETS.map((p) => {
+        {ACOUSTIC_DNA_PRESETS.map((p) => {
             const pRefSeq = parseFasta(p.ref).sequence
             const isActive = sequence === pRefSeq
             return (
@@ -106,10 +106,11 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
                   boxShadow: isActive ? '0 4px 14px rgba(37,99,235,0.15)' : 'none',
                 }}
               >
+                {/* Gene Title */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ fontSize: '1.2rem' }}>{p.icon}</span>
-                    <span style={{ fontWeight: 900, fontSize: '0.88rem', color: '#0f172a' }}>{p.name}</span>
+                    <span style={{ fontWeight: 900, fontSize: '0.85rem', color: '#0f172a' }}>{p.name}</span>
                   </div>
                   {isActive && (
                     <span style={{
@@ -121,17 +122,45 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
                   )}
                 </div>
 
-                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#0284c7', marginBottom: 4 }}>
-                  🔊 {p.acousticProfile}
+                {/* Gene & Organism */}
+                <div style={{ fontSize: '0.68rem', fontWeight: 700, color: '#0284c7', marginBottom: 2 }}>
+                  🧬 {p.gene}
+                </div>
+                <div style={{ display: 'flex', gap: 12, marginBottom: 6, flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, fontStyle: 'italic' }}>
+                    {p.organism}
+                  </span>
+                  <span style={{ fontSize: '0.62rem', color: '#475569', fontWeight: 700, background: '#f1f5f9', padding: '1px 6px', borderRadius: 4 }}>
+                    📍 {p.locus}
+                  </span>
                 </div>
 
-                <div style={{ fontSize: '0.68rem', color: '#475569', lineHeight: 1.4, marginBottom: 10 }}>
-                  {p.description}
+                {/* Mutation Type */}
+                <div style={{
+                  fontSize: '0.64rem', fontWeight: 800, color: '#dc2626',
+                  background: 'rgba(220,38,38,0.06)', borderRadius: 6, padding: '4px 8px',
+                  marginBottom: 5, display: 'inline-block',
+                }}>
+                  ⚠ {p.mutationType}
                 </div>
 
+                {/* Clinical Significance */}
+                <div style={{
+                  fontSize: '0.62rem', fontWeight: 700, color: '#7c3aed',
+                  marginBottom: 5, lineHeight: 1.35,
+                }}>
+                  🏥 {p.clinicalSignificance}
+                </div>
+
+                {/* Biological Function */}
+                <div style={{ fontSize: '0.62rem', color: '#475569', lineHeight: 1.45, marginBottom: 10 }}>
+                  {p.biologicalFunction}
+                </div>
+
+                {/* Footer */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ fontSize: '0.64rem', fontWeight: 700, color: '#64748b' }}>
-                    Length: {pRefSeq.length} bp
+                  <span style={{ fontSize: '0.62rem', fontWeight: 700, color: '#64748b' }}>
+                    {pRefSeq.length} bp · GC {((pRefSeq.match(/[GC]/g) || []).length / pRefSeq.length * 100).toFixed(1)}%
                   </span>
                   <button
                     style={{
@@ -140,7 +169,7 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
                       border: 'none',
                       borderRadius: 8,
                       padding: '6px 14px',
-                      fontSize: '0.7rem',
+                      fontSize: '0.68rem',
                       fontWeight: 800,
                       cursor: 'pointer',
                       boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
@@ -149,7 +178,7 @@ export default function AcousticPresetsDrawer({ open, onClose }: Props) {
                       gap: 4,
                     }}
                   >
-                    <span>▶</span> LOAD & PLAY INSTANTLY
+                    <span>▶</span> SONIFY & ANALYZE
                   </button>
                 </div>
               </div>
