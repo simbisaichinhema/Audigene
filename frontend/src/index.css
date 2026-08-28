@@ -1,0 +1,170 @@
+/* AudiGene Design System — Bright Scientific Instrument */
+
+:root {
+  /* ── Backgrounds ── */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fc;
+  --bg-tertiary: #f0f2f7;
+  --bg-canvas: #fafbfd;
+
+  /* ── Surfaces ── */
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-overlay: rgba(255,255,255,0.95);
+
+  /* ── Borders ── */
+  --border: #e2e6ef;
+  --border-subtle: #edf0f5;
+  --border-strong: #c7cdd9;
+
+  /* ── Text ── */
+  --text-primary: #1a1d2e;
+  --text-secondary: #4a5068;
+  --text-muted: #8891a8;
+  --text-inverse: #ffffff;
+
+  /* ── Primary: Electric Blue ── */
+  --primary: #3b6cf5;
+  --primary-hover: #2d5be0;
+  --primary-light: #eef2ff;
+  --primary-glow: rgba(59,108,245,0.15);
+
+  /* ── Accents ── */
+  --cyan: #06b6d4;
+  --cyan-light: #ecfeff;
+  --violet: #8b5cf6;
+  --violet-light: #f5f3ff;
+  --magenta: #d946ef;
+  --magenta-light: #fdf4ff;
+
+  /* ── Semantic ── */
+  --green: #22c55e;
+  --green-light: #f0fdf4;
+  --orange: #f59e0b;
+  --orange-light: #fffbeb;
+  --red: #ef4444;
+  --red-light: #fef2f2;
+
+  /* ── Nucleotide Base Colors ── */
+  --base-a: #ef4444;
+  --base-a-bg: #fef2f2;
+  --base-c: #3b82f6;
+  --base-c-bg: #eff6ff;
+  --base-g: #22c55e;
+  --base-g-bg: #f0fdf4;
+  --base-t: #f59e0b;
+  --base-t-bg: #fffbeb;
+
+  /* ── Playback Cursor ── */
+  --cursor: #ef4444;
+  --cursor-glow: rgba(239,68,68,0.3);
+
+  /* ── Sonification ── */
+  --sonification: #8b5cf6;
+  --sonification-light: #f5f3ff;
+
+  /* ── AI ── */
+  --ai: #d946ef;
+  --ai-light: #fdf4ff;
+
+  /* ── Spacing ── */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.75rem;
+  --space-lg: 1rem;
+  --space-xl: 1.5rem;
+  --space-2xl: 2rem;
+
+  /* ── Radius ── */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.06), 0 4px 6px -4px rgba(0,0,0,0.04);
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', Consolas, monospace;
+
+  /* ── Transitions ── */
+  --transition-fast: 80ms ease;
+  --transition: 150ms ease;
+  --transition-slow: 250ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: #0f1117;
+    --bg-secondary: #161822;
+    --bg-tertiary: #1c1f2e;
+    --bg-canvas: #12141e;
+    --surface: #1a1d2e;
+    --surface-raised: #1e2132;
+    --surface-overlay: rgba(22,24,34,0.95);
+    --border: #2a2d3e;
+    --border-subtle: #22253a;
+    --border-strong: #3a3d50;
+    --text-primary: #e8eaf0;
+    --text-secondary: #9ca3bc;
+    --text-muted: #6b7194;
+    --primary-light: #1e2a4a;
+    --cyan-light: #0a2a30;
+    --violet-light: #1e1a3a;
+    --magenta-light: #2a1a3a;
+    --green-light: #0a2a15;
+    --orange-light: #2a2005;
+    --red-light: #2a0a0a;
+    --base-a-bg: #2a0a0a;
+    --base-c-bg: #0a1a3a;
+    --base-g-bg: #0a2a15;
+    --base-t-bg: #2a2005;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2);
+    --shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -4px rgba(0,0,0,0.2);
+  }
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-canvas);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ── Selection ── */
+::selection { background: var(--primary-glow); color: var(--primary); }
+
+/* ── Focus ── */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* ── Code ── */
+code, pre, .mono { font-family: var(--font-mono); }

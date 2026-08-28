@@ -1,0 +1,8 @@
+node_modules
+.venv
+dist
+build
+*.zip
+*.tar.gz
+*.pdf
+.DS_Store

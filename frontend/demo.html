@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudiGene — DNA Sonification Demo</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #14141f;
+    --border: #2a2a3a;
+    --text: #e0e0f0;
+    --muted: #8888aa;
+    --accent: #6366f1;
+    --accent-glow: #818cf8;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+  }
+  h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.25rem; }
+  h1 span { color: var(--accent); }
+  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 2rem; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 720px;
+    margin-bottom: 1rem;
+  }
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--accent-glow);
+  }
+  label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  input[type="text"], select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+  }
+  .btn-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  button {
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent-glow); }
+  button:active { transform: scale(0.97); }
+  button.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  button.primary:hover { background: var(--accent-glow); }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .timeline-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--bg);
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    position: relative;
+    cursor: pointer;
+  }
+  .timeline-progress {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.05s linear;
+  }
+  .time-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .sequence-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    word-break: break-all;
+    padding: 0.75rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    min-height: 3rem;
+  }
+  .base-A { color: #f87171; font-weight: 700; }
+  .base-C { color: #60a5fa; font-weight: 700; }
+  .base-G { color: #4ade80; font-weight: 700; }
+  .base-T { color: #facc15; font-weight: 700; }
+  .base-active {
+    background: rgba(99,102,241,0.3);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+  .status {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+  .status.playing { color: var(--success); }
+  .status.error { color: var(--danger); }
+  .method-info {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+    padding: 0.75rem;
+    background: var(--bg);
+    border-radius: var(--radius);
+    margin-top: 0.75rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>Audio<span>Gene</span></h1>
+<p class="subtitle">DNA Sonification — Temple 2017</p>
+
+<!-- Input -->
+<div class="card">
+  <h2>Sequence</h2>
+  <label for="dna-input">DNA Sequence (A, C, G, T)</label>
+  <input type="text" id="dna-input" value="ACGTACGT" placeholder="Enter DNA sequence..." spellcheck="false" autocomplete="off">
+  <label for="method-select">Method</label>
+  <select id="method-select">
+    <option value="nucleotide_chroma">Nucleotide Chroma (Paper Exact)</option>
+    <option value="dna_walking">DNA Walking (Paper Hybrid)</option>
+    <option value="dna_chords">DNA Chords (Paper Exact)</option>
+  </select>
+  <div id="method-info" class="method-info"></div>
+  <div class="btn-row" style="margin-top:1rem">
+    <button class="primary" id="btn-analyse">Analyse &amp; Load</button>
+  </div>
+</div>
+
+<!-- Display -->
+<div class="card">
+  <h2>Sequence</h2>
+  <div class="sequence-display" id="seq-display"></div>
+</div>
+
+<!-- Playback -->
+<div class="card">
+  <h2>Playback</h2>
+  <div class="timeline-bar" id="timeline-bar">
+    <div class="timeline-progress" id="timeline-progress"></div>
+  </div>
+  <div class="time-display">
+    <span id="time-current">0.00s</span>
+    <span id="time-total">0.00s</span>
+  </div>
+  <div class="btn-row">
+    <button id="btn-play" disabled>▶ Play</button>
+    <button id="btn-pause" disabled>⏸ Pause</button>
+    <button id="btn-stop" disabled>⏹ Stop</button>
+    <button id="btn-restart" disabled>⏮ Restart</button>
+  </div>
+  <div id="status" class="status">Ready</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// AudiGene — Browser Sonification Engine
+//
+// This is the rendering layer only. All scientific mappings are
+// ported from the Python sonification layer and produce identical
+// events. The Web Audio API renders these events as real audio.
+//
+// Scientific fidelity: this code does NOT add, remove, or alter
+// any frequency, duration, or amplitude from the event model.
+// ═══════════════════════════════════════════════════════════════════════
+
+const BASE_FREQ = 262.0; // C4
+const DURATION = 0.1;    // 100ms per event
+
+// Equal temperament: semitone ratios from C4
+const SEMITONE_RATIO = Math.pow(2, 1/12);
+const SEMITONES = {
+  'C4': 0, 'D4': 2, 'E4': 4, 'F4': 5, 'G4': 7, 'A4': 9, 'B4': 11,
+  'C5': 12, 'D5': 14, 'E5': 16, 'F5': 17, 'G5': 19, 'A5': 21, 'B5': 23,
+};
+
+function pitchToFreq(pitch) {
+  const semitones = SEMITONES[pitch];
+  if (semitones === undefined) return BASE_FREQ;
+  return BASE_FREQ * Math.pow(SEMITONE_RATIO, semitones);
+}
+
+let _eventId = 0;
+function makeEvent(position, frequency, start_time, biologicalValue, pitch, opts = {}) {
+  return {
+    event_id: `evt-${++_eventId}`,
+    position,
+    frame: 0,
+    event_type: opts.event_type || 'nucleotide',
+    biological_value: biologicalValue,
+    start_time,
+    duration: opts.duration || DURATION,
+    pitch: pitch || 'C4',
+    frequency,
+    amplitude: opts.amplitude || 0.5,
+    instrument: opts.instrument || 'sine',
+    simultaneous_pitches: opts.simultaneous_pitches || [],
+    simultaneous_frequencies: opts.simultaneous_frequencies || [],
+  };
+}
+
+// ── Nucleotide Chroma (PAPER_EXACT) ──
+function nucleotideChroma(seq) {
+  const MAP = { A: 262.0, C: 330.0, G: 392.0, T: 523.0 };
+  const PITCH = { A: 'C4', C: 'E4', G: 'G4', T: 'C5' };
+  const events = [];
+  for (let i = 0; i < seq.length; i++) {
+    const b = seq[i];
+    const freq = MAP[b] || 262.0;
+    events.push(makeEvent(i, freq, i * DURATION, b, PITCH[b] || 'C4'));
+  }
+  return {
+    analysis_id: crypto.randomUUID(),
+    profile: 'paper_2017',
+    method: 'nucleotide_chroma',
+    sequence_length: seq.length,
+    total_duration: seq.length * DURATION,
+    events,
+  };
+}
+
+// ── DNA Walking (PAPER_HYBRID) ──
+function dnaWalking(seq) {
+  const MAP = { A: 262.0, C: 330.0, G: 392.0, T: 523.0 };
+  const events = [];
+  let currentFreq = BASE_FREQ;
+  for (let i = 0; i < seq.length; i++) {
+    const b = seq[i];
+    const targetFreq = MAP[b] || BASE_FREQ;
+    const step = (targetFreq - currentFreq) / 3;
+    currentFreq += step;
+    events.push(makeEvent(i, currentFreq, i * DURATION, b, 'C4', {
+      event_type: 'walking',
+    }));
+  }
+  return {
+    analysis_id: crypto.randomUUID(),
+    profile: 'audigene_hybrid',
+    method: 'dna_walking',
+    sequence_length: seq.length,
+    total_duration: seq.length * DURATION,
+    events,
+  };
+}
+
+// ── DNA Chords (PAPER_EXACT) ──
+function dnaChords(seq) {
+  const MAP = { A: 262.0, C: 330.0, G: 392.0, T: 523.0 };
+  const PITCH = { A: 'C4', C: 'E4', G: 'G4', T: 'C5' };
+  const events = [];
+  for (let i = 0; i < seq.length; i += 3) {
+    const group = seq.slice(i, i + 3);
+    if (group.length < 2) break; // Need at least 2 for a chord
+    const sPitches = [];
+    const sFreqs = [];
+    for (const b of group) {
+      const freq = MAP[b] || BASE_FREQ;
+      sFreqs.push(freq);
+      sPitches.push({ pitch: PITCH[b] || 'C4', frequency: freq, amplitude: 0.5 });
+    }
+    events.push(makeEvent(i, sFreqs[0], (i / 3) * DURATION * group.length, group[0], sPitches[0].pitch, {
+      event_type: 'chord',
+      simultaneous_pitches: sPitches,
+      simultaneous_frequencies: sFreqs,
+      duration: DURATION * group.length,
+    }));
+  }
+  return {
+    analysis_id: crypto.randomUUID(),
+    profile: 'paper_2017',
+    method: 'dna_chords',
+    sequence_length: seq.length,
+    total_duration: events.length ? events[events.length - 1].start_time + events[events.length - 1].duration : 0,
+    events,
+  };
+}
+
+// ── Method registry ──
+const METHODS = {
+  nucleotide_chroma: { fn: nucleotideChroma, info: 'PAPER_EXACT — Each nucleotide maps to a fixed pitch (A→C4, C→E4, G→G4, T→C5). Temple 2017 Table 1.' },
+  dna_walking: { fn: dnaWalking, info: 'PAPER_HYBRID — Frame detection is paper-exact; pitch walks toward each nucleotide target by 1/3 of the interval. Temple 2017 §3.4.' },
+  dna_chords: { fn: dnaChords, info: 'PAPER_EXACT — Groups of 3 nucleotides rendered as simultaneous pitches. Temple 2017 Table 3.' },
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// Audio Engine (Web Audio API)
+// ═══════════════════════════════════════════════════════════════════════
+
+let audioCtx = null;
+let timeline = null;
+let isPlaying = false;
+let isPaused = false;
+let startTime = 0;      // audioCtx.currentTime when playback started
+let pauseOffset = 0;     // timeline seconds elapsed when paused
+let scheduledNodes = [];
+let rafId = null;
+
+function ensureAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function scheduleEvent(ev) {
+  const ctx = audioCtx;
+  const timelineTime = ev.start_time;
+  const contextTime = startTime + timelineTime - pauseOffset;
+
+  // Build frequencies to render
+  let freqs = [ev.frequency];
+  let amps = [ev.amplitude];
+  if (ev.simultaneous_frequencies && ev.simultaneous_frequencies.length > 0) {
+    freqs = ev.simultaneous_frequencies;
+    amps = ev.simultaneous_pitches.length > 0
+      ? ev.simultaneous_pitches.map(p => p.amplitude)
+      : freqs.map(() => ev.amplitude);
+  }
+
+  for (let i = 0; i < freqs.length; i++) {
+    const freq = freqs[i];
+    const amp = amps[i];
+    if (freq <= 0) continue;
+
+    const attack = 0.005;
+    const release = 0.01;
+    const holdEnd = contextTime + ev.duration - release;
+    const safeHold = Math.max(holdEnd, contextTime + attack);
+
+    const osc = ctx.createOscillator();
+    const validTypes = ['sine','square','sawtooth','triangle'];
+    osc.type = validTypes.includes(ev.instrument) ? ev.instrument : 'sine';
+    osc.frequency.value = freq;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, contextTime);
+    gain.gain.linearRampToValueAtTime(amp, contextTime + attack);
+    gain.gain.setValueAtTime(amp, safeHold);
+    gain.gain.linearRampToValueAtTime(0, contextTime + ev.duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(contextTime);
+    osc.stop(contextTime + ev.duration + 0.01);
+    scheduledNodes.push(osc);
+  }
+}
+
+let scheduledUpTo = 0;
+
+function schedulerLoop() {
+  if (!isPlaying || !timeline) return;
+
+  const currentTime = getTime();
+  const lookAhead = 0.1;
+  const scheduleUntil = currentTime + lookAhead;
+
+  for (const ev of timeline.events) {
+    const evEnd = ev.start_time + ev.duration;
+    if (ev.start_time < scheduleUntil && evEnd > currentTime && ev.start_time >= scheduledUpTo) {
+      scheduleEvent(ev);
+      scheduledUpTo = ev.start_time;
+      highlightBase(ev.position);
+    }
+  }
+
+  // Check completion
+  if (currentTime >= timeline.total_duration && timeline.total_duration > 0) {
+    stopPlayback();
+    setStatus('Complete');
+    return;
+  }
+
+  rafId = requestAnimationFrame(schedulerLoop);
+}
+
+function getTime() {
+  if (!audioCtx || !isPlaying) return pauseOffset;
+  return pauseOffset + (audioCtx.currentTime - startTime);
+}
+
+function play() {
+  if (!timeline || timeline.events.length === 0) return;
+  if (isPlaying) return;
+
+  ensureAudioCtx();
+  isPlaying = true;
+  isPaused = false;
+  startTime = audioCtx.currentTime;
+  scheduledUpTo = 0;
+  setStatus('Playing', 'playing');
+  updateButtons();
+  schedulerLoop();
+}
+
+function pause() {
+  if (!isPlaying) return;
+  pauseOffset = getTime();
+  isPlaying = false;
+  isPaused = true;
+  cancelAnimationFrame(rafId);
+  scheduledNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+  scheduledNodes = [];
+  setStatus('Paused');
+  updateButtons();
+}
+
+function stopPlayback() {
+  isPlaying = false;
+  isPaused = false;
+  pauseOffset = 0;
+  cancelAnimationFrame(rafId);
+  scheduledNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+  scheduledNodes = [];
+  scheduledUpTo = 0;
+  clearHighlight();
+  updateProgress(0);
+  updateButtons();
+}
+
+function restart() {
+  stopPlayback();
+  play();
+}
+
+function seek(time) {
+  if (!timeline) return;
+  time = Math.max(0, Math.min(time, timeline.total_duration));
+  const wasPlaying = isPlaying;
+  if (isPlaying) {
+    cancelAnimationFrame(rafId);
+    scheduledNodes.forEach(n => { try { n.stop(); } catch(e) {} });
+    scheduledNodes = [];
+  }
+  pauseOffset = time;
+  scheduledUpTo = 0;
+  updateProgress(time);
+  if (wasPlaying) {
+    startTime = audioCtx.currentTime;
+    isPlaying = true;
+    isPaused = false;
+    schedulerLoop();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// UI
+// ═══════════════════════════════════════════════════════════════════════
+
+const $ = id => document.getElementById(id);
+
+function setStatus(text, cls = '') {
+  const el = $('status');
+  el.textContent = text;
+  el.className = 'status ' + cls;
+}
+
+function updateButtons() {
+  $('btn-play').disabled = !timeline || isPlaying;
+  $('btn-pause').disabled = !isPlaying;
+  $('btn-stop').disabled = !timeline;
+  $('btn-restart').disabled = !timeline;
+}
+
+function renderSequence(seq) {
+  const el = $('seq-display');
+  el.innerHTML = seq.split('').map((b, i) =>
+    `<span class="base-${b}" data-pos="${i}">${b}</span>`
+  ).join('');
+}
+
+function highlightBase(pos) {
+  document.querySelectorAll('.base-active').forEach(e => e.classList.remove('base-active'));
+  const el = document.querySelector(`.base-${['A','C','G','T'][timeline.events.find(e => e.position === pos)?.biological_value] || ''}[data-pos="${pos}"]`);
+  if (el) el.classList.add('base-active');
+}
+
+function clearHighlight() {
+  document.querySelectorAll('.base-active').forEach(e => e.classList.remove('base-active'));
+}
+
+function updateProgress(time) {
+  if (!timeline) return;
+  const pct = timeline.total_duration > 0 ? (time / timeline.total_duration) * 100 : 0;
+  $('timeline-progress').style.width = Math.min(pct, 100) + '%';
+  $('time-current').textContent = time.toFixed(2) + 's';
+}
+
+// Progress update loop
+setInterval(() => {
+  if (isPlaying) {
+    const t = getTime();
+    updateProgress(t);
+  }
+}, 50);
+
+// ── Event listeners ──
+
+$('method-select').addEventListener('change', () => {
+  const m = $('method-select').value;
+  $('method-info').textContent = METHODS[m]?.info || '';
+});
+
+$('btn-analyse').addEventListener('click', () => {
+  const raw = $('dna-input').value.toUpperCase().replace(/[^ACGT]/g, '');
+  if (!raw) { setStatus('Enter a valid DNA sequence', 'error'); return; }
+
+  const method = $('method-select').value;
+  const handler = METHODS[method];
+  if (!handler) { setStatus('Unknown method', 'error'); return; }
+
+  stopPlayback();
+  timeline = handler.fn(raw);
+  $('time-total').textContent = timeline.total_duration.toFixed(2) + 's';
+  $('time-current').textContent = '0.00s';
+  renderSequence(raw);
+  setStatus(`Loaded ${timeline.events.length} events (${timeline.total_duration.toFixed(2)}s)`);
+  updateButtons();
+});
+
+$('btn-play').addEventListener('click', play);
+$('btn-pause').addEventListener('click', pause);
+$('btn-stop').addEventListener('click', () => { stopPlayback(); setStatus('Stopped'); });
+$('btn-restart').addEventListener('click', restart);
+
+$('timeline-bar').addEventListener('click', (e) => {
+  if (!timeline) return;
+  const rect = e.currentTarget.getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  seek(pct * timeline.total_duration);
+});
+
+$('dna-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('btn-analyse').click();
+});
+
+// Init method info
+$('method-info').textContent = METHODS[$('method-select').value]?.info || '';
+</script>
+</body>
+</html>

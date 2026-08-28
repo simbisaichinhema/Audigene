@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "audigene"
+version = "0.1.0"
+description = "Scientifically grounded biological sequence sonification instrument"
+requires-python = ">=3.10"
+dependencies = [
+    "biopython>=1.80",
+    "numpy>=1.24",
+    "fastapi>=0.100",
+    "uvicorn>=0.22",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.24",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["bioinformatics/tests", "sonification/tests", "tests", "backend/tests"]
+pythonpath = ["."]
