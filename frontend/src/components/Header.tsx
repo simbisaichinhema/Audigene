@@ -78,7 +78,7 @@ async function testConnection(provider: LlmProvider, apiKey: string): Promise<{ 
 export type HeaderTab = 'single' | 'compare' | 'analyze' | 'workflows'
 
 // Paste your Gemini API key below to hardcode it directly into the codebase:
-export const HARDCODED_GEMINI_KEY = 'AQ.Ab8RN6I-5R1ffF48FGMPdqL-vVCZIwwMplzJWElBNMoCIGa3qA'
+export const HARDCODED_GEMINI_KEY = 'AQ.Ab8RN6INKt_AVK6Fx8PqqAWlfb2_i3P7Hpfb2QdaijDnnCAFcQ'
 
 interface HeaderProps {
   activeTab: HeaderTab
