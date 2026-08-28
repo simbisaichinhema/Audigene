@@ -84,12 +84,24 @@ export default function Spectrum() {
     const canvas = canvasRef.current
     if (!canvas) return
     const parent = canvas.parentElement
-    if (parent) {
-      canvas.width = parent.clientWidth || 700
-      canvas.height = 150
-    }
+    if (!parent) return
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const width = entry.contentRect.width || parent.clientWidth || 300
+        const height = entry.contentRect.height || parent.clientHeight || 140
+        canvas.width = width
+        canvas.height = height
+      }
+    })
+
+    resizeObserver.observe(parent)
     rafRef.current = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(rafRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+      cancelAnimationFrame(rafRef.current)
+    }
   }, [draw])
 
   useEffect(() => {
@@ -100,8 +112,8 @@ export default function Spectrum() {
   return (
     <div className="ag-spectrum-container" style={{ padding: '4px 0' }}>
       <div className="ag-spectrum-body" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-        <div className="spec-canvas-wrapper" style={{ flex: 1, borderRadius: 12, overflow: 'hidden', border: '1px solid #1e293b', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
-          <canvas ref={canvasRef} style={{ width: '100%', height: '150px', display: 'block' }} />
+        <div className="spec-canvas-wrapper" style={{ flex: 1, borderRadius: 12, overflow: 'hidden', border: '1px solid #1e293b', boxShadow: '0 4px 20px rgba(0,0,0,0.3)', height: '140px' }}>
+          <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
         </div>
       </div>
     </div>

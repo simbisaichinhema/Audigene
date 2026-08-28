@@ -106,12 +106,24 @@ export default function Waveform() {
     const canvas = canvasRef.current
     if (!canvas) return
     const parent = canvas.parentElement
-    if (parent) {
-      canvas.width = parent.clientWidth || 500
-      canvas.height = 100
-    }
+    if (!parent) return
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        const width = entry.contentRect.width || parent.clientWidth || 300
+        const height = entry.contentRect.height || parent.clientHeight || 100
+        canvas.width = width
+        canvas.height = height
+      }
+    })
+
+    resizeObserver.observe(parent)
     rafRef.current = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(rafRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+      cancelAnimationFrame(rafRef.current)
+    }
   }, [draw])
 
   useEffect(() => {

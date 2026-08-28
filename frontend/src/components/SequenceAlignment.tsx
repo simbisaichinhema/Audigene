@@ -1,15 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePlayback } from '../state/usePlayback'
 
 function AlignmentContent({ fullView = false }: { fullView?: boolean }) {
   const { sequence, comparisonSequence, activePosition, setActivePosition, differences } = usePlayback()
 
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   const diffPosSet = new Set(differences.map((d) => d.position))
   const maxLen = Math.max(sequence.length, comparisonSequence.length)
 
   // In compact mode show a window; in full mode show everything
-  const windowSize = fullView ? maxLen : 25
-  const startIdx = fullView ? 0 : Math.max(0, activePosition - 10)
+  const windowSize = fullView ? maxLen : (isMobile ? 12 : 25)
+  const startIdx = fullView ? 0 : Math.max(0, activePosition - (isMobile ? 6 : 10))
   const endIdx = Math.min(maxLen, startIdx + windowSize)
 
   const seqAWindow = sequence.slice(startIdx, endIdx).split('')
