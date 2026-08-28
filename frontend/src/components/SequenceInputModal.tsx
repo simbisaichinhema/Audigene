@@ -128,7 +128,7 @@ export default function SequenceInputModal({ open, onClose }: Props) {
         backdropFilter: 'blur(8px)',
         zIndex: 99999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 24,
+        padding: 'max(12px, env(safe-area-inset-top, 12px)) 12px max(12px, env(safe-area-inset-bottom, 12px))',
         animation: 'seqModalIn 0.2s cubic-bezier(0.16,1,0.3,1)',
       }}
     >
@@ -337,6 +337,46 @@ export default function SequenceInputModal({ open, onClose }: Props) {
         @keyframes seqModalIn {
           from { opacity: 0; transform: scale(0.96) translateY(8px); }
           to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @media (max-width: 768px) {
+          /* Make modal full-height on mobile */
+          .seq-modal-inner {
+            border-radius: 16px !important;
+            max-height: 95vh !important;
+          }
+          .seq-modal-header {
+            padding: 12px 14px !important;
+          }
+          .seq-modal-header-icon {
+            width: 32px !important;
+            height: 32px !important;
+            font-size: 1rem !important;
+          }
+          .seq-modal-header-title {
+            font-size: 0.9rem !important;
+          }
+          .seq-modal-presets {
+            padding: 8px 14px !important;
+            gap: 7px !important;
+          }
+          .seq-modal-body {
+            padding: 14px !important;
+            gap: 14px !important;
+          }
+          .seq-modal-footer {
+            padding: 10px 14px !important;
+          }
+          .seq-modal-textarea {
+            height: 130px !important;
+            font-size: 0.74rem !important;
+            padding: 10px 12px !important;
+          }
+          .seq-modal-tools {
+            flex-wrap: wrap !important;
+          }
+          .seq-modal-mutate-btn {
+            font-size: 0.68rem !important;
+          }
         }
       `}</style>
     </div>

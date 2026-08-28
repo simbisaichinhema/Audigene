@@ -1352,3 +1352,604 @@ body {
   color: #94a3b8;
   margin-top: 4px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — TABLET (≤ 1024px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .ag-main-layout {
+    gap: 14px;
+    padding: 14px 16px;
+  }
+
+  .ag-col-left {
+    width: 240px;
+  }
+
+  .ag-col-right {
+    width: 280px;
+  }
+
+  .ag-header {
+    padding: 0 16px;
+  }
+
+  .ag-title {
+    font-size: 1.15rem;
+  }
+
+  .ag-tab-btn {
+    padding: 5px 10px;
+    font-size: 0.68rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — PHONE (≤ 768px)
+   Full single-column stacked layout + bottom tab bar
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Ensure no horizontal overflow */
+  html, body, #root {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .ag-app-wrapper {
+    min-height: 100vh;
+    padding-bottom: 64px; /* space for bottom nav */
+  }
+
+  /* ── COMPACT HEADER ── */
+  .ag-header {
+    height: 52px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .ag-header-collapsed {
+    height: 36px;
+    padding: 0 10px;
+  }
+
+  .ag-brand {
+    gap: 7px;
+  }
+
+  .ag-brand svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .ag-tagline {
+    display: none;
+  }
+
+  .ag-title {
+    font-size: 1.05rem;
+  }
+
+  /* Nav becomes input-sequences button only — tabs move to bottom bar */
+  .ag-nav-tabs {
+    gap: 3px;
+    padding: 3px;
+  }
+
+  .ag-tab-btn {
+    padding: 4px 8px;
+    font-size: 0.6rem;
+  }
+
+  /* Hide text labels in header for tab buttons — keep only if needed */
+  .ag-header-actions {
+    gap: 6px;
+  }
+
+  .ag-status-pill {
+    font-size: 0.6rem;
+    padding: 3px 8px;
+    gap: 4px;
+  }
+
+  /* Hide LLM selector label on mobile */
+  .ag-llm-selector {
+    display: none;
+  }
+
+  .ag-header-toggle-btn {
+    display: none;
+  }
+
+  /* ── MAIN LAYOUT: Single column stacked ── */
+  .ag-main-layout {
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px 10px;
+    max-width: 100%;
+  }
+
+  /* Hide sidebar columns on mobile (accessible via modal sheet) */
+  .ag-col-left {
+    width: 100%;
+    flex-shrink: unset;
+  }
+
+  .ag-col-right {
+    width: 100%;
+    flex-shrink: unset;
+    /* Collapsed by default on mobile — expanded as a drawer/sheet */
+    display: none;
+  }
+
+  .ag-col-right.mobile-open {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    z-index: 500;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(24px);
+    padding: 14px;
+    overflow-y: auto;
+    animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .ag-col-center {
+    gap: 10px;
+  }
+
+  .ag-red-guide-line {
+    display: none;
+  }
+
+  /* ── COMPACT CARDS ── */
+  .ag-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .ag-card-title {
+    font-size: 0.72rem;
+    gap: 6px;
+  }
+
+  .ag-badge {
+    width: 18px;
+    height: 18px;
+    font-size: 0.62rem;
+  }
+
+  /* ── SEQUENCE ALIGNMENT ── */
+  .ag-alignment-grid {
+    padding: 8px;
+    border-radius: 8px;
+    gap: 6px;
+    overflow-x: auto;
+  }
+
+  .seq-label {
+    width: 56px;
+    font-size: 0.6rem;
+  }
+
+  .base-token {
+    width: 20px;
+    height: 22px;
+    font-size: 0.68rem;
+    border-radius: 4px;
+  }
+
+  .seq-letters {
+    gap: 3px;
+  }
+
+  .ag-alignment-legend {
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.62rem;
+  }
+
+  .legend-group {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* ── FREQUENCY GRAPH ── */
+  .ag-freq-legend-top {
+    gap: 8px;
+    font-size: 0.62rem;
+    flex-wrap: wrap;
+  }
+
+  .wf-canvas-wrapper,
+  .spec-canvas-wrapper {
+    height: 80px;
+  }
+
+  /* ── PLAYBACK CONTROLS BAR — stacked 2-row on mobile ── */
+  .ag-playback-controls-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    justify-content: center;
+  }
+
+  .ag-mode-section {
+    width: 100%;
+    order: 1;
+  }
+
+  .mode-buttons {
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+
+  .mode-btn {
+    padding: 4px 8px;
+    font-size: 0.62rem;
+    border-radius: 5px;
+  }
+
+  .ag-transport-center {
+    order: 2;
+    gap: 6px;
+  }
+
+  .ctrl-btn-sub {
+    padding: 6px 8px;
+    font-size: 0.68rem;
+    border-radius: 6px;
+  }
+
+  .big-red-play-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .ag-controls-right {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .speed-chips {
+    gap: 3px;
+  }
+
+  .speed-chip {
+    padding: 2px 6px;
+    font-size: 0.62rem;
+    border-radius: 5px;
+  }
+
+  .volume-slider-row input {
+    width: 60px;
+  }
+
+  .vol-pct {
+    font-size: 0.6rem;
+  }
+
+  /* ── QUICK ACTIONS — 3-column grid stays, but smaller ── */
+  .ag-quick-actions-card {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .ag-section-label {
+    font-size: 0.62rem;
+    margin-bottom: 8px;
+  }
+
+  .ag-qa-btn {
+    padding: 8px 4px 6px;
+    border-radius: 6px;
+  }
+
+  .ag-qa-btn .qa-icon {
+    font-size: 0.9rem;
+  }
+
+  .ag-qa-btn .qa-label {
+    font-size: 0.52rem;
+  }
+
+  .ag-qa-btn .qa-desc {
+    font-size: 0.48rem;
+  }
+
+  /* ── DIFF MAP ── */
+  .ag-diff-track-area {
+    height: 40px;
+  }
+
+  /* ── WORKFLOW ── */
+  .ag-workflow-content {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ag-workflow-diagram {
+    width: 100%;
+    height: 60px;
+  }
+
+  .ag-wf-step {
+    padding: 6px 10px;
+    font-size: 0.68rem;
+    gap: 7px;
+  }
+
+  /* ── BOTTOM STATUS BAR ── */
+  .ag-bottom-status-bar {
+    padding: 7px 12px;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    border-radius: 10px;
+  }
+
+  .col-label {
+    font-size: 0.52rem;
+  }
+
+  .col-val {
+    font-size: 0.65rem;
+  }
+
+  /* ── WHY PANEL ── */
+  .why-panel {
+    padding: 12px;
+    border-radius: 10px;
+  }
+
+  .why-panel h3 {
+    font-size: 0.76rem;
+  }
+
+  .why-panel p {
+    font-size: 0.7rem;
+  }
+
+  /* ── DRAWER / MODAL OVERLAY ── */
+  .ag-drawer-box {
+    width: calc(100vw - 24px);
+    max-width: 480px;
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  /* ── API PANEL position on mobile ── */
+  .ag-api-panel {
+    right: 10px !important;
+    width: calc(100vw - 20px) !important;
+    max-width: 360px !important;
+  }
+
+  /* ── MOBILE BOTTOM NAVIGATION BAR ── */
+  .ag-mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    display: flex;
+    align-items: stretch;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    z-index: 1000;
+    padding: 0;
+  }
+
+  .ag-mobile-nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 8px 2px 6px;
+    transition: all 0.15s ease;
+    border-top: 2px solid transparent;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .ag-mobile-nav-btn.active {
+    border-top-color: #2563eb;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
+  .ag-mobile-nav-btn .mob-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .ag-mobile-nav-btn .mob-label {
+    font-size: 0.52rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    text-transform: uppercase;
+  }
+
+  .ag-mobile-nav-btn.active .mob-label {
+    color: #2563eb;
+  }
+
+  /* AI Agent FAB — floating action button */
+  .ag-mobile-agent-fab {
+    position: fixed;
+    bottom: 74px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #9333ea, #db2777);
+    color: white;
+    border: none;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(147, 51, 234, 0.45);
+    z-index: 900;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .ag-mobile-agent-fab:hover,
+  .ag-mobile-agent-fab:active {
+    transform: scale(1.08);
+    box-shadow: 0 8px 26px rgba(147, 51, 234, 0.6);
+  }
+
+  /* Sidebar as full-screen overlay sheet */
+  .ag-right-sidebar-prominent {
+    border-radius: 14px 14px 0 0 !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE — SMALL PHONE (≤ 480px)
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .ag-header {
+    height: 48px;
+    padding: 0 10px;
+  }
+
+  .ag-title {
+    font-size: 0.95rem;
+  }
+
+  .ag-main-layout {
+    padding: 8px 8px;
+    gap: 8px;
+  }
+
+  .ag-card {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .base-token {
+    width: 18px;
+    height: 20px;
+    font-size: 0.6rem;
+    border-radius: 3px;
+  }
+
+  .seq-letters {
+    gap: 2px;
+  }
+
+  .seq-label {
+    width: 48px;
+    font-size: 0.56rem;
+  }
+
+  .ag-qa-btn {
+    padding: 6px 3px 5px;
+  }
+
+  .ag-qa-btn .qa-icon {
+    font-size: 0.82rem;
+  }
+
+  .ag-qa-btn .qa-label {
+    font-size: 0.48rem;
+  }
+
+  .ag-qa-btn .qa-desc {
+    display: none;
+  }
+
+  .big-red-play-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+
+  .ctrl-btn-sub {
+    padding: 5px 6px;
+    font-size: 0.62rem;
+  }
+
+  .ag-nav-tabs {
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .ag-tab-btn {
+    padding: 3px 6px;
+    font-size: 0.55rem;
+  }
+
+  .ag-mobile-bottom-nav {
+    height: 58px;
+  }
+
+  .ag-mobile-nav-btn .mob-icon {
+    font-size: 1.05rem;
+  }
+
+  .ag-mobile-nav-btn .mob-label {
+    font-size: 0.48rem;
+  }
+
+  .ag-mobile-agent-fab {
+    bottom: 68px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+  }
+
+  .ag-drawer-box {
+    padding: 14px;
+  }
+
+  .wf-canvas-wrapper,
+  .spec-canvas-wrapper {
+    height: 66px;
+  }
+
+  .ag-playback-controls-bar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HIDE desktop-only elements on mobile
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* On mobile the right sidebar is shown via the FAB/agent button */
+  /* Hide collapse button (not needed — header is always compact) */
+  .ag-header-toggle-btn { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SHOW desktop layout above 768px
+   (ensure bottom nav is hidden on desktop)
+   ═══════════════════════════════════════════════════════════ */
+@media (min-width: 769px) {
+  .ag-mobile-bottom-nav { display: none !important; }
+  .ag-mobile-agent-fab { display: none !important; }
+  .ag-col-right { display: flex !important; }
+}
