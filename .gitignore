@@ -8,6 +8,7 @@ dist/
 frontend/dist/
 build/
 *.tsbuildinfo
+*.egg-info/
 
 # Vercel
 .vercel/
