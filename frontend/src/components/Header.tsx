@@ -86,11 +86,11 @@ interface HeaderProps {
 export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showApiPanel, setShowApiPanel] = useState(false)
-  const [selectedProvider, setSelectedProvider] = useState<LlmProvider>('anthropic')
+  const [selectedProvider, setSelectedProvider] = useState<LlmProvider>('google')
   const [llmStates, setLlmStates] = useState<Record<LlmProvider, LlmState>>({
     openai: { apiKey: '', status: 'idle', errorMsg: '' },
     anthropic: { apiKey: '', status: 'idle', errorMsg: '' },
-    google: { apiKey: '', status: 'idle', errorMsg: '' },
+    google: { apiKey: import.meta.env.VITE_GEMINI_API_KEY || '', status: import.meta.env.VITE_GEMINI_API_KEY ? 'connected' : 'idle', errorMsg: '' },
     openrouter: { apiKey: '', status: 'idle', errorMsg: '' },
   })
   const [showKey, setShowKey] = useState(false)
@@ -98,6 +98,35 @@ export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderPr
   const setLlmConfig = usePlayback((s) => s.setLlmConfig)
   const current = llmStates[selectedProvider]
   const activeProvider = LLM_PROVIDERS.find((p) => p.id === selectedProvider)!
+
+  // Auto-load saved keys from localStorage or env on mount
+  useEffect(() => {
+    try {
+      const savedKeysStr = localStorage.getItem('audigene_llm_keys')
+      const envGeminiKey = import.meta.env.VITE_GEMINI_API_KEY || ''
+      const updated = { ...llmStates }
+
+      if (envGeminiKey) {
+        updated.google = { apiKey: envGeminiKey, status: 'connected', errorMsg: '' }
+      }
+
+      if (savedKeysStr) {
+        const parsed = JSON.parse(savedKeysStr) as Record<string, string>
+        for (const [prov, key] of Object.entries(parsed)) {
+          if (key && updated[prov as LlmProvider]) {
+            updated[prov as LlmProvider] = { apiKey: key, status: 'connected', errorMsg: '' }
+          }
+        }
+      }
+
+      setLlmStates(updated)
+      if (updated.google.status === 'connected') {
+        setSelectedProvider('google')
+      } else if (updated.anthropic.status === 'connected') {
+        setSelectedProvider('anthropic')
+      }
+    } catch {}
+  }, [])
 
   const connectedProviders = Object.entries(llmStates).filter(([, v]) => v.status === 'connected')
   const anyConnected = connectedProviders.length > 0
@@ -118,6 +147,11 @@ export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderPr
     const result = await testConnection(selectedProvider, current.apiKey)
     if (result.ok) {
       updateState({ status: 'connected' })
+      try {
+        const saved = JSON.parse(localStorage.getItem('audigene_llm_keys') || '{}')
+        saved[selectedProvider] = current.apiKey
+        localStorage.setItem('audigene_llm_keys', JSON.stringify(saved))
+      } catch {}
     } else {
       updateState({ status: 'error', errorMsg: result.error || 'Unknown error' })
     }

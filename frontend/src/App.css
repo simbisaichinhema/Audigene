@@ -7,7 +7,7 @@
   --ag-card-bg: rgba(255, 255, 255, 0.78);
   --ag-card-border: rgba(255, 255, 255, 0.95);
   --ag-text: #0f172a;
-  --ag-text-muted: #64748b;
+  --ag-text-muted: #334155;
   --ag-blue: #2563eb;
   --ag-purple: #9333ea;
   --ag-magenta: #db2777;
@@ -465,7 +465,8 @@ body {
   cursor: pointer;
   font-size: 0.68rem;
   font-family: 'JetBrains Mono', monospace;
-  color: #64748b;
+  color: #1e293b;
+  font-weight: 700;
 }
 
 .tick-badge-red {
@@ -841,18 +842,18 @@ body {
 }
 
 .ag-mode-section { display: flex; flex-direction: column; gap: 4px; }
-.mode-label, .group-label { font-size: 0.62rem; font-weight: 800; color: #64748b; }
+.mode-label, .group-label { font-size: 0.62rem; font-weight: 800; color: #1e293b; letter-spacing: 0.04em; }
 .mode-buttons { display: flex; gap: 4px; }
 
 .mode-btn {
   padding: 5px 12px;
-  border: 1px solid rgba(203, 213, 225, 0.8);
+  border: 1.5px solid #cbd5e1;
   border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 800;
   cursor: pointer;
-  background: #f8fafc;
-  color: #475569;
+  background: #ffffff;
+  color: #0f172a;
   transition: all 0.15s ease;
 }
 

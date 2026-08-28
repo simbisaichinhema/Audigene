@@ -18,8 +18,8 @@ function AlignmentContent({ fullView = false }: { fullView?: boolean }) {
   const maxLen = Math.max(sequence.length, comparisonSequence.length)
 
   // In compact mode show a window; in full mode show everything
-  const windowSize = fullView ? maxLen : (isMobile ? 12 : 25)
-  const startIdx = fullView ? 0 : Math.max(0, activePosition - (isMobile ? 6 : 10))
+  const windowSize = fullView ? maxLen : (isMobile ? 14 : 25)
+  const startIdx = fullView ? 0 : Math.max(0, activePosition - (isMobile ? 7 : 10))
   const endIdx = Math.min(maxLen, startIdx + windowSize)
 
   const seqAWindow = sequence.slice(startIdx, endIdx).split('')
