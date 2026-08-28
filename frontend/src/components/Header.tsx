@@ -119,6 +119,8 @@ export default function Header({ activeTab, onTabChange, onInputOpen, onPresetsO
       if (savedKeysStr) {
         const parsed = JSON.parse(savedKeysStr) as Record<string, string>
         for (const [prov, key] of Object.entries(parsed)) {
+          // Never let localStorage override the hardcoded Gemini key
+          if (prov === 'google' && effectiveGeminiKey) continue
           if (key && updated[prov as LlmProvider]) {
             updated[prov as LlmProvider] = { apiKey: key, status: 'connected', errorMsg: '' }
           }
