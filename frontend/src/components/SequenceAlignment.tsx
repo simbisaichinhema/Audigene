@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { usePlayback } from '../state/usePlayback'
+import { ACOUSTIC_DNA_PRESETS, DnaPreset, parseFasta } from '../bioinformatics/sequenceUtils'
 
 function AlignmentContent({ fullView = false }: { fullView?: boolean }) {
   const { sequence, comparisonSequence, activePosition, setActivePosition, differences } = usePlayback()
@@ -122,7 +123,18 @@ function AlignmentContent({ fullView = false }: { fullView?: boolean }) {
 
 export default function SequenceAlignment() {
   const [modalOpen, setModalOpen] = useState(false)
-  const { sequence, comparisonSequence, differences, alignment } = usePlayback()
+  const { sequence, comparisonSequence, differences, alignment, loadTimeline, loadComparisonTimeline, method } = usePlayback()
+
+  const handleSelectPreset = (p: DnaPreset) => {
+    const refSeq = parseFasta(p.ref).sequence
+    const sampleSeq = parseFasta(p.sample).sequence
+    loadTimeline(refSeq, method)
+    loadComparisonTimeline(sampleSeq)
+    // Instantly start audio playback!
+    setTimeout(() => {
+      usePlayback.getState().play()
+    }, 60)
+  }
 
   return (
     <>
@@ -155,6 +167,63 @@ export default function SequenceAlignment() {
           >
             ⤢ EXPAND VIEW
           </button>
+        </div>
+
+        {/* ── Prominent Instant Play Acoustic Preset Bar ── */}
+        <div style={{
+          marginBottom: 14,
+          padding: '10px 12px',
+          background: 'linear-gradient(135deg, rgba(37,99,235,0.06), rgba(2,132,199,0.04))',
+          borderRadius: 12,
+          border: '1.5px solid #bfdbfe',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.68rem', fontWeight: 900, color: '#0f172a', letterSpacing: '0.02em', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span>🎵</span> ACOUSTIC SOUND PRESETS (TAP TO PLAY INSTANTLY)
+            </span>
+            <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#2563eb' }}>
+              ⚡ Plays Sound Immediately
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2, WebkitOverflowScrolling: 'touch' }}>
+            {ACOUSTIC_DNA_PRESETS.map((p) => {
+              const pRefSeq = parseFasta(p.ref).sequence
+              const isActive = sequence === pRefSeq
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => handleSelectPreset(p)}
+                  title={`${p.name} — ${p.description}`}
+                  style={{
+                    flexShrink: 0,
+                    padding: '6px 12px',
+                    borderRadius: 20,
+                    border: isActive ? '1.5px solid #2563eb' : '1.5px solid #cbd5e1',
+                    background: isActive ? 'linear-gradient(135deg, #2563eb, #0284c7)' : '#ffffff',
+                    color: isActive ? '#ffffff' : '#0f172a',
+                    fontSize: '0.66rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    boxShadow: isActive ? '0 3px 10px rgba(37,99,235,0.3)' : '0 1px 3px rgba(0,0,0,0.04)',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <span>{p.icon}</span>
+                  <span>{p.name}</span>
+                  <span style={{ opacity: isActive ? 0.95 : 0.75, fontSize: '0.58rem', fontWeight: 700 }}>
+                    ({p.acousticProfile})
+                  </span>
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <AlignmentContent fullView={false} />

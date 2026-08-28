@@ -12,19 +12,23 @@ import WhyPanel from './components/WhyPanel'
 import LlmSetupPanel from './components/LlmSetupPanel'
 import EventTimeline from './components/EventTimeline'
 import SequenceInputModal from './components/SequenceInputModal'
+import AcousticPresetsDrawer from './components/AcousticPresetsDrawer'
+import AboutAppModal from './components/AboutAppModal'
 import './App.css'
 
-const MOBILE_TABS: { id: HeaderTab | 'input'; icon: string; label: string }[] = [
+const MOBILE_TABS: { id: HeaderTab | 'input' | 'presets' | 'about'; icon: string; label: string }[] = [
   { id: 'compare',   icon: '🧬', label: 'Compare'   },
-  { id: 'single',    icon: '🔬', label: 'Single'    },
+  { id: 'presets',   icon: '🎵', label: 'Presets'   },
+  { id: 'about',     icon: 'ℹ️', label: 'About'     },
   { id: 'analyze',   icon: '📊', label: 'Analyze'   },
-  { id: 'workflows', icon: '⚙️', label: 'Workflows' },
   { id: 'input',     icon: '✏️', label: 'Input'     },
 ]
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<HeaderTab>('compare')
   const [inputModalOpen, setInputModalOpen] = useState(false)
+  const [presetsDrawerOpen, setPresetsDrawerOpen] = useState(false)
+  const [aboutModalOpen, setAboutModalOpen] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const isPlaying = usePlayback((s) => s.isPlaying)
   const tick = usePlayback((s) => s.tick)
@@ -36,9 +40,13 @@ export default function App() {
     initDefaultState()
   }, [initDefaultState])
 
-  const handleMobileTab = (id: HeaderTab | 'input') => {
+  const handleMobileTab = (id: HeaderTab | 'input' | 'presets' | 'about') => {
     if (id === 'input') {
       setInputModalOpen(true)
+    } else if (id === 'presets') {
+      setPresetsDrawerOpen(true)
+    } else if (id === 'about') {
+      setAboutModalOpen(true)
     } else {
       setActiveTab(id as HeaderTab)
       setSidebarOpen(false)
@@ -52,6 +60,8 @@ export default function App() {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onInputOpen={() => setInputModalOpen(true)}
+        onPresetsOpen={() => setPresetsDrawerOpen(true)}
+        onAboutOpen={() => setAboutModalOpen(true)}
       />
 
       <main className="ag-main-layout">
@@ -168,6 +178,12 @@ export default function App() {
 
       {/* Global Sequence Input Modal — accessible from header from any tab */}
       <SequenceInputModal open={inputModalOpen} onClose={() => setInputModalOpen(false)} />
+      
+      {/* Global Acoustic Presets Slide-Over Sidebar Drawer */}
+      <AcousticPresetsDrawer open={presetsDrawerOpen} onClose={() => setPresetsDrawerOpen(false)} />
+      
+      {/* Global About AudiGene & Project Credits Modal */}
+      <AboutAppModal open={aboutModalOpen} onClose={() => setAboutModalOpen(false)} />
     </div>
   )
 }

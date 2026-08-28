@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { usePlayback, type LlmProvider } from '../state/usePlayback'
 
 const PROVIDER_OPTIONS: { id: LlmProvider; label: string; icon: string; defaultModel: string; hint: string }[] = [
-  { id: 'gemini',     label: 'Google Gemini', icon: '✨', defaultModel: 'gemini-1.5-flash', hint: 'Recommended · Direct Browser API' },
+  { id: 'gemini',     label: 'Google Gemini', icon: '✨', defaultModel: 'gemini-3.6-flash', hint: 'Recommended · Direct Browser API' },
   { id: 'openrouter', label: 'OpenRouter',    icon: '🌐', defaultModel: 'anthropic/claude-3.5-sonnet', hint: 'Access Claude, GPT-4, Llama, etc.' },
   { id: 'openai',     label: 'OpenAI GPT-4o', icon: '🟢', defaultModel: 'gpt-4o-mini', hint: 'Requires valid OpenAI API key' },
   { id: 'anthropic',  label: 'Anthropic',     icon: '🟠', defaultModel: 'claude-3-5-sonnet-latest', hint: 'Proxy required (CORS enabled)' },

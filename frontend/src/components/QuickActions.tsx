@@ -9,6 +9,9 @@ export default function QuickActions() {
   const handleSelectPreset = (p: DnaPreset) => {
     loadTimeline(parseFasta(p.ref).sequence, method)
     loadComparisonTimeline(parseFasta(p.sample).sequence)
+    setTimeout(() => {
+      usePlayback.getState().play()
+    }, 60)
   }
 
   // ── PASTE FROM CLIPBOARD ──────────────────────────────────

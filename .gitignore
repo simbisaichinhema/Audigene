@@ -3,6 +3,14 @@ node_modules/
 frontend/node_modules/
 .venv/
 
+# Environment secrets (never push to GitHub)
+.env
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+
 # Build output
 dist/
 frontend/dist/

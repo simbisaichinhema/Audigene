@@ -77,20 +77,26 @@ async function testConnection(provider: LlmProvider, apiKey: string): Promise<{ 
 
 export type HeaderTab = 'single' | 'compare' | 'analyze' | 'workflows'
 
+// Paste your Gemini API key below to hardcode it directly into the codebase:
+export const HARDCODED_GEMINI_KEY = ''
+
 interface HeaderProps {
   activeTab: HeaderTab
   onTabChange: (tab: HeaderTab) => void
   onInputOpen: () => void
+  onPresetsOpen: () => void
+  onAboutOpen: () => void
 }
 
-export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderProps) {
+export default function Header({ activeTab, onTabChange, onInputOpen, onPresetsOpen, onAboutOpen }: HeaderProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [showApiPanel, setShowApiPanel] = useState(false)
   const [selectedProvider, setSelectedProvider] = useState<LlmProvider>('google')
+  const initialGeminiKey = HARDCODED_GEMINI_KEY || import.meta.env.VITE_GEMINI_API_KEY || ''
   const [llmStates, setLlmStates] = useState<Record<LlmProvider, LlmState>>({
     openai: { apiKey: '', status: 'idle', errorMsg: '' },
     anthropic: { apiKey: '', status: 'idle', errorMsg: '' },
-    google: { apiKey: import.meta.env.VITE_GEMINI_API_KEY || '', status: import.meta.env.VITE_GEMINI_API_KEY ? 'connected' : 'idle', errorMsg: '' },
+    google: { apiKey: initialGeminiKey, status: initialGeminiKey ? 'connected' : 'idle', errorMsg: '' },
     openrouter: { apiKey: '', status: 'idle', errorMsg: '' },
   })
   const [showKey, setShowKey] = useState(false)
@@ -99,15 +105,15 @@ export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderPr
   const current = llmStates[selectedProvider]
   const activeProvider = LLM_PROVIDERS.find((p) => p.id === selectedProvider)!
 
-  // Auto-load saved keys from localStorage or env on mount
+  // Auto-load saved keys from localStorage or env/hardcoded on mount
   useEffect(() => {
     try {
       const savedKeysStr = localStorage.getItem('audigene_llm_keys')
-      const envGeminiKey = import.meta.env.VITE_GEMINI_API_KEY || ''
+      const effectiveGeminiKey = HARDCODED_GEMINI_KEY || import.meta.env.VITE_GEMINI_API_KEY || ''
       const updated = { ...llmStates }
 
-      if (envGeminiKey) {
-        updated.google = { apiKey: envGeminiKey, status: 'connected', errorMsg: '' }
+      if (effectiveGeminiKey) {
+        updated.google = { apiKey: effectiveGeminiKey, status: 'connected', errorMsg: '' }
       }
 
       if (savedKeysStr) {
@@ -217,6 +223,44 @@ export default function Header({ activeTab, onTabChange, onInputOpen }: HeaderPr
           onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateY(0)' }}
         >
           🧬 INPUT SEQUENCES
+        </button>
+
+        {/* 2. ACOUSTIC PRESETS Sidebar Button */}
+        <button
+          onClick={onPresetsOpen}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: '#ffffff', color: '#2563eb',
+            border: '1.5px solid #bfdbfe', borderRadius: 8,
+            padding: '6px 13px', fontSize: '0.72rem', fontWeight: 800,
+            cursor: 'pointer', letterSpacing: '0.04em',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+            transition: 'all 0.15s ease',
+            marginRight: 6,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#eff6ff' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#ffffff' }}
+        >
+          🎵 PRESETS
+        </button>
+
+        {/* 3. ABOUT / CREDITS Button */}
+        <button
+          onClick={onAboutOpen}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 5,
+            background: '#ffffff', color: '#0f172a',
+            border: '1.5px solid #cbd5e1', borderRadius: 8,
+            padding: '6px 13px', fontSize: '0.72rem', fontWeight: 800,
+            cursor: 'pointer', letterSpacing: '0.04em',
+            boxShadow: '0 2px 6px rgba(0,0,0,0.04)',
+            transition: 'all 0.15s ease',
+            marginRight: 6,
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#ffffff' }}
+        >
+          ℹ️ ABOUT
         </button>
 
         {/* 2. SINGLE Tab */}

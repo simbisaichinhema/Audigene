@@ -9,6 +9,18 @@
 
 ---
 
+## 🏆 Project Credits & Authors
+
+> 🎉 **Created for Agentic Day Celebration**  
+> 🏛️ **Institution**: Vignan University — Department of Bioinformatics  
+
+### 👥 Research & Development Team
+* 🧬 **Simbisai Chinhema** (Department of Bioinformatics, Vignan University)
+* 🔬 **Craig M Mariwa** (Department of Bioinformatics, Vignan University)
+* 💻 **Mellisa M Mpofu** (Department of Bioinformatics, Vignan University)
+
+---
+
 ## ✨ Key Features
 
 ### 1. 🎛 Interactive Sonification Frequency Graph

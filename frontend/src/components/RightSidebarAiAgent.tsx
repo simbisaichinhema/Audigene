@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { usePlayback } from '../state/usePlayback'
+import { calculateGcContent } from '../bioinformatics/sequenceUtils'
 
 interface ChatMessage {
   sender: 'user' | 'assistant' | 'system'
@@ -37,18 +38,31 @@ export default function RightSidebarAiAgent() {
       return `⚠️ No LLM connected. Click the provider pill in the header (top-right) to enter your API key and connect. I can still answer basic questions from the local sequence data:\n\n• Gene A: ${sequence.length} bp | Gene B: ${comparisonSequence.length} bp\n• Variants detected: ${differences.length}\n• Alignment identity: ${alignment ? (alignment.identity * 100).toFixed(1) + '%' : 'N/A'}\n• Active base position: #${activePosition}`
     }
 
-    const sys = `You are a genomic bioinformatics AI assistant embedded in the AudiGene sonification platform.
-Current sequence context:
-- Reference Sequence (Gene A): ${sequence.slice(0, 200)}${sequence.length > 200 ? '...' : ''}
-- Sample Sequence (Gene B): ${comparisonSequence.slice(0, 200)}${comparisonSequence.length > 200 ? '...' : ''}
-- Active base position: #${activePosition}
-- Detected variants: ${differences.length} (${alignment?.mismatchCount ?? 0} subs, ${alignment?.insertionCount ?? 0} ins, ${alignment?.deletionCount ?? 0} del)
-- Alignment identity: ${alignment ? (alignment.identity * 100).toFixed(1) + '%' : 'N/A'}
-Respond concisely in 2-4 sentences. Use plain text, no markdown headers.`
+    const gcA = calculateGcContent(sequence)
+    const gcB = calculateGcContent(comparisonSequence)
+
+    const sys = `You are AudiGene AI, a specialized biological sonification & genomic analysis co-pilot embedded inside the AudiGene web application.
+Your role: Help geneticists, bioinformaticians, and students analyze DNA/RNA sequences, understand biological point mutations, interpret pitch sonification graphs, and explore acoustic sequence mappings.
+
+AudiGene Platform Capabilities:
+1. Temple 2017 Pitch Mapping: A (262.0 Hz, C4), C (330.0 Hz, E4), G (392.0 Hz, G4), T (523.0 Hz, C5).
+2. Real-time Pairwise Alignment: Detects substitutions (mismatches), insertions, and deletions between Reference (Gene A) and Sample (Gene B).
+3. Acoustic DNA Profiles: AT-Rich (High treble staccato melodies), GC-Rich (Deep warm bass synth resonance), Symphonic Scales (4-octave bio-arpeggios), Trinucleotide CAG Repeats (Huntington triplet cascades).
+
+Current Live User Context:
+- Reference Gene A Length: ${sequence.length} bp (GC: ${gcA}%)
+- Sample Gene B Length: ${comparisonSequence.length} bp (GC: ${gcB}%)
+- Alignment Identity: ${alignment ? (alignment.identity * 100).toFixed(1) : '100'}%
+- Total Detected Mutations: ${differences.length} (${alignment?.mismatchCount ?? 0} substitutions, ${alignment?.insertionCount ?? 0} ins, ${alignment?.deletionCount ?? 0} del)
+- Active Playhead Position: Base #${activePosition}
+- Sequence A (First 150 bp): ${sequence.slice(0, 150)}
+- Sequence B (First 150 bp): ${comparisonSequence.slice(0, 150)}
+
+Answer the researcher's query accurately, professionally, and concisely in 2-4 sentences.`
 
     try {
       if (llmProvider === 'google') {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${llmApiKey}`
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${llmApiKey}`
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
