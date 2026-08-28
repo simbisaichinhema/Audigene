@@ -1,7 +1,10 @@
-"""AudiGene backend application.
+import os
+import sys
 
-FastAPI server providing sonification endpoints.
-"""
+# Ensure project root is on sys.path for Vercel execution
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
