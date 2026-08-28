@@ -1,24 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { usePlayback } from '../state/usePlayback'
-import { calculateGcContent, parseFasta } from '../bioinformatics/sequenceUtils'
-
-const PRESETS = [
-  {
-    name: 'Hemoglobin — Sickle Cell',
-    ref: '>Reference_HbA\nATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGG',
-    sample: '>Sample_HbS\nATGGTGCACCTGACTCCTGTGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGG',
-  },
-  {
-    name: 'COVID-19 — Omicron vs Delta',
-    ref: '>Delta_Spike\nATGTTTGTTTTTCTTGTTTTATTGCCACTAGTCTCTAGTCAGTGTGTTAATCTTACAACCAGAACTCAATTACCCCCTGCATACACTAATTCT',
-    sample: '>Omicron_Spike\nATGTTTGTTTTTCTTGTTTTATTGCCACTAGTCTCTAGTCAGTGTGTTAATCTAACAACCAGAACTCAATTACCCCCTGCATACACTAATTCT',
-  },
-  {
-    name: 'BRCA1 — Breast Cancer Frameshift',
-    ref: '>BRCA1_Normal\nATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAATGCTATGCAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATC',
-    sample: '>BRCA1_Mutation\nATGGATTTATCTGCTCTTCGCGTTGAAGAAGTACAAAATGTCATTAATGCTATGTAGAAAATCTTAGAGTGTCCCATCTGTCTGGAGTTGATC',
-  },
-]
+import { calculateGcContent, parseFasta, ACOUSTIC_DNA_PRESETS, DnaPreset } from '../bioinformatics/sequenceUtils'
 
 interface Props {
   open: boolean
@@ -57,8 +39,7 @@ export default function SequenceInputModal({ open, onClose }: Props) {
     if (s) loadComparisonTimeline(s)
   }
 
-  const handleLoadPreset = (i: number) => {
-    const p = PRESETS[i]
+  const handleLoadPreset = (p: DnaPreset) => {
     setRefVal(p.ref)
     setSampleVal(p.sample)
     loadTimeline(parseFasta(p.ref).sequence, 'nucleotide_chroma')
@@ -206,21 +187,26 @@ export default function SequenceInputModal({ open, onClose }: Props) {
             <span>📂</span> UPLOAD FROM PC (.FASTA / .TXT)
           </button>
           <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#94a3b8', margin: '0 4px' }}>| PRESETS:</span>
-          {PRESETS.map((p, i) => (
+          <span style={{ fontSize: '0.65rem', fontWeight: 800, color: '#64748b', margin: '0 4px', flexShrink: 0 }}>| ACOUSTIC PRESETS:</span>
+          {ACOUSTIC_DNA_PRESETS.map((p) => (
             <button
-              key={i}
-              onClick={() => handleLoadPreset(i)}
+              key={p.id}
+              onClick={() => handleLoadPreset(p)}
+              title={`${p.name} — ${p.description}`}
               style={{
                 whiteSpace: 'nowrap', padding: '5px 12px',
                 borderRadius: 20, border: '1px solid #bfdbfe',
                 background: '#eff6ff', color: '#2563eb',
-                fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer',
-                transition: 'all 0.12s ease',
+                fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer',
+                transition: 'all 0.12s ease', flexShrink: 0,
+                display: 'flex', alignItems: 'center', gap: 5,
               }}
               onMouseEnter={e => { e.currentTarget.style.background = '#2563eb'; e.currentTarget.style.color = '#fff' }}
               onMouseLeave={e => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.color = '#2563eb' }}
             >
-              🧬 {p.name}
+              <span>{p.icon}</span>
+              <span>{p.name}</span>
+              <span style={{ opacity: 0.8, fontSize: '0.58rem', fontWeight: 700, color: '#0284c7' }}>({p.acousticProfile})</span>
             </button>
           ))}
         </div>

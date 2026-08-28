@@ -1,9 +1,15 @@
 import { useRef } from 'react'
 import { usePlayback } from '../state/usePlayback'
+import { ACOUSTIC_DNA_PRESETS, parseFasta, DnaPreset } from '../bioinformatics/sequenceUtils'
 
 export default function QuickActions() {
   const { initDefaultState, sequence, loadTimeline, loadComparisonTimeline, method } = usePlayback()
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleSelectPreset = (p: DnaPreset) => {
+    loadTimeline(parseFasta(p.ref).sequence, method)
+    loadComparisonTimeline(parseFasta(p.sample).sequence)
+  }
 
   // ── PASTE FROM CLIPBOARD ──────────────────────────────────
   const handlePaste = async () => {
@@ -144,6 +150,43 @@ export default function QuickActions() {
             <span className="qa-desc">{a.desc}</span>
           </button>
         ))}
+      </div>
+
+      {/* ── Acoustic DNA Sample Presets Quick Switch Bar ── */}
+      <div style={{ marginTop: 12, borderTop: '1px solid #e2e8f0', paddingTop: 8 }}>
+        <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#1e293b', marginBottom: 6, letterSpacing: '0.04em' }}>
+          ACOUSTIC DNA SAMPLE PRESETS (CLICK TO PLAY DIVERSE SOUND PROFILES)
+        </div>
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 4, WebkitOverflowScrolling: 'touch' }}>
+          {ACOUSTIC_DNA_PRESETS.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => handleSelectPreset(p)}
+              title={`${p.name} — ${p.description}`}
+              style={{
+                flexShrink: 0,
+                padding: '5px 10px',
+                borderRadius: 8,
+                border: '1.5px solid #cbd5e1',
+                background: '#ffffff',
+                color: '#0f172a',
+                fontSize: '0.64rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.color = '#2563eb' }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.color = '#0f172a' }}
+            >
+              <span>{p.icon}</span>
+              <span>{p.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )

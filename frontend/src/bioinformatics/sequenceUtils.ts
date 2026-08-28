@@ -8,6 +8,64 @@ export const NUCLEOTIDE_MAP: Record<string, { pitch: string; freq: number }> = {
   T: { pitch: 'C5', freq: 523.0 },
 }
 
+export interface DnaPreset {
+  id: string
+  name: string
+  acousticProfile: string
+  description: string
+  icon: string
+  ref: string
+  sample: string
+}
+
+export const ACOUSTIC_DNA_PRESETS: DnaPreset[] = [
+  {
+    id: 'hbs',
+    name: 'Sickle Cell Mutation',
+    acousticProfile: 'Harmonic Point Mutation',
+    description: 'Mid-range harmonic chord with a single sharp substitution pitch at Position #17.',
+    icon: '🩸',
+    ref: '>Reference_HbA\nATGGTGCACCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGG',
+    sample: '>Sample_HbS\nATGGTGCACCTGACTCCTGTGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGGTGAACGTGGATGAAGTTGGTGGTGAGGCCCTGGGCAGG',
+  },
+  {
+    id: 'at_high',
+    name: 'High Pitch Treble (AT-Rich)',
+    acousticProfile: 'High Notes & Rapid Staccato',
+    description: 'High frequency C5 & C4 notes (523 Hz & 262 Hz) creating bright, sparkling high-pitch melodies.',
+    icon: '✨',
+    ref: '>AT_Rich_Melodic_High\nATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTATATAT',
+    sample: '>AT_Rich_Variant\nATATATATAAAAATTTTATTTTATATATATATAAAAATTTTATTTTGTATATATATAAAAATTTTATTTTATATAT',
+  },
+  {
+    id: 'gc_low',
+    name: 'Deep Bass (GC-Rich Island)',
+    acousticProfile: 'Low Bass & Heavy Tones',
+    description: 'Low frequency G4 & E4 notes (392 Hz & 330 Hz) producing deep, warm, heavy synth tones.',
+    icon: '🎸',
+    ref: '>GC_Rich_Low_Bass\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGG',
+    sample: '>GC_Rich_Variant\nGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGGCCCGGGGCGCGCGCGCCCGGA',
+  },
+  {
+    id: 'scale',
+    name: 'Symphonic Scale (Kinase)',
+    acousticProfile: 'Wide Dynamic Range Melody',
+    description: 'Sweeping 4-octave bio-scale cycling through low C, mid E/G, and high T notes.',
+    icon: '🎼',
+    ref: '>Insulin_Kinase_Scale\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAC',
+    sample: '>Insulin_Kinase_Variant\nATGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTACGGCCATATGCGCAAGCTTTAT',
+  },
+  {
+    id: 'cag_repeat',
+    name: 'Trinucleotide Cascade (CAG)',
+    acousticProfile: 'Rhythmic Cadence & Repeats',
+    description: 'Hypnotic CAG triplet oscillation highlighting frameshifts and sequence length expansion.',
+    icon: '⚡',
+    ref: '>Huntington_CAG_Normal\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
+    sample: '>Huntington_CAG_Expanded\nCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAGCAG',
+  },
+]
+
 /** Parse FASTA header and clean sequence to A, T, G, C bases only */
 export function parseFasta(rawInput: string): { header: string; sequence: string } {
   const trimmed = rawInput.trim()
