@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
 import { usePlayback } from '../state/usePlayback'
 
 const NUCLEOTIDE_COLORS: Record<string, string> = {
@@ -13,20 +13,24 @@ export default function FrequencyGraph() {
   const setActivePosition = usePlayback((s) => s.setActivePosition)
   const timeline = usePlayback((s) => s.timeline)
   const currentTime = usePlayback((s) => s.currentTime)
+  const isPlaying = usePlayback((s) => s.isPlaying)
   const seek = usePlayback((s) => s.seek)
 
+  const plotContainerRef = useRef<HTMLDivElement>(null)
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; pos: number; base: string; freq: number } | null>(null)
 
-  const { points, svgPath, areaPath, totalDuration } = useMemo(() => {
+  const { points, svgPath, areaPath, totalDuration, W, PADDING } = useMemo(() => {
     if (!timeline || timeline.events.length === 0) {
-      return { points: [], svgPath: '', areaPath: '', totalDuration: 1 }
+      return { points: [], svgPath: '', areaPath: '', totalDuration: 1, W: 1000, PADDING: { left: 24, right: 24, top: 16, bottom: 16 } }
     }
 
-    const W = 1000
+    const eventsCount = timeline.events.length
+    // Allocate at least 22px per point so frequency curves are never squashed on mobile screens
+    const calculatedW = Math.max(1000, eventsCount * 22)
     const H = 170
-    const PADDING = { left: 16, right: 16, top: 16, bottom: 16 }
-    const plotW = W - PADDING.left - PADDING.right
-    const plotH = H - PADDING.top - PADDING.bottom
+    const pad = { left: 24, right: 24, top: 16, bottom: 16 }
+    const plotW = calculatedW - pad.left - pad.right
+    const plotH = H - pad.top - pad.bottom
 
     const freqs = timeline.events.map((e) => e.frequency)
     const minFreq = Math.min(...freqs)
@@ -36,8 +40,8 @@ export default function FrequencyGraph() {
     const dur = timeline.total_duration || 1
 
     const pts = timeline.events.map((ev) => {
-      const x = PADDING.left + (ev.start_time / dur) * plotW
-      const y = PADDING.top + plotH - ((ev.frequency - minFreq) / freqRange) * plotH
+      const x = pad.left + (ev.start_time / dur) * plotW
+      const y = pad.top + plotH - ((ev.frequency - minFreq) / freqRange) * plotH
       return { x, y, freq: ev.frequency, pos: ev.position, base: ev.biological_value, startTime: ev.start_time }
     })
 
@@ -63,55 +67,83 @@ export default function FrequencyGraph() {
       ? `M ${pts[0].x},${H} L ${pts[0].x},${pts[0].y} ${path.replace('M ' + pts[0].x + ',' + pts[0].y, '')} L ${pts[pts.length - 1].x},${H} Z`
       : ''
 
-    return { points: pts, svgPath: path, areaPath: area, totalDuration: dur }
+    return { points: pts, svgPath: path, areaPath: area, totalDuration: dur, W: calculatedW, PADDING: pad }
   }, [timeline])
 
-  const playheadX = totalDuration > 0 ? 16 + (currentTime / totalDuration) * 968 : null
+  const plotW = W - PADDING.left - PADDING.right
+  const playheadX = totalDuration > 0 ? PADDING.left + (currentTime / totalDuration) * plotW : null
   const yTicks = ['1046 Hz', '784 Hz', '523 Hz', '392 Hz', '262 Hz']
+
+  // Auto-scroll graph viewport to follow playhead on mobile
+  useEffect(() => {
+    if (isPlaying && plotContainerRef.current && playheadX !== null) {
+      const container = plotContainerRef.current
+      const containerWidth = container.clientWidth
+      const targetScroll = (playheadX / W) * container.scrollWidth - containerWidth / 2
+      container.scrollTo({ left: Math.max(0, targetScroll), behavior: 'smooth' })
+    }
+  }, [isPlaying, playheadX, W])
 
   const handleGraphClick = (e: React.MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect()
     const clickX = e.clientX - rect.left
-    const pct = Math.max(0, Math.min(1, (clickX - 16) / (rect.width - 32)))
+    const pct = Math.max(0, Math.min(1, (clickX - PADDING.left) / (rect.width - PADDING.left - PADDING.right)))
     const targetTime = pct * totalDuration
     seek(targetTime)
   }
 
   return (
-    <div className="ag-card ag-freq-graph-card" style={{ padding: '18px 22px', background: '#ffffff', borderRadius: 16, border: '1px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-      <div className="ag-card-header" style={{ marginBottom: 12 }}>
-        <div className="ag-card-title">
-          <span className="ag-badge badge-blue">4</span>
-          <span style={{ fontWeight: 900, color: '#0f172a', fontSize: '0.95rem' }}>SONIFICATION FREQUENCY GRAPH</span>
-          <span style={{ fontSize: '0.68rem', color: '#64748b', fontWeight: 600, marginLeft: 8 }}>
-            (Click graph anywhere to jump playhead)
+    <div className="ag-card ag-freq-graph-card" style={{ padding: '16px', background: '#ffffff', borderRadius: 16, border: '1px solid #cbd5e1', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
+      {/* Header */}
+      <div className="ag-card-header" style={{ marginBottom: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="ag-card-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 6 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span className="ag-badge badge-blue">4</span>
+            <span style={{ fontWeight: 900, color: '#0f172a', fontSize: '0.88rem' }}>SONIFICATION FREQUENCY GRAPH</span>
+          </div>
+          <span style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
+            (Tap graph to seek)
           </span>
         </div>
-        <div className="ag-freq-legend-top" style={{ display: 'flex', gap: 14, fontSize: '0.72rem', fontWeight: 800 }}>
-          <span style={{ color: '#047857' }}>● A (262 Hz)</span>
-          <span style={{ color: '#b45309' }}>● T (523 Hz)</span>
-          <span style={{ color: '#1d4ed8' }}>● G (392 Hz)</span>
-          <span style={{ color: '#7e22ce' }}>● C (330 Hz)</span>
+
+        {/* Nucleotide Color Legend Chips */}
+        <div className="ag-freq-legend-top" style={{ display: 'flex', gap: 8, fontSize: '0.68rem', fontWeight: 800, flexWrap: 'wrap' }}>
+          <span style={{ color: '#047857', background: 'rgba(4,120,87,0.08)', padding: '3px 8px', borderRadius: 6 }}>● A (262 Hz)</span>
+          <span style={{ color: '#b45309', background: 'rgba(180,83,9,0.08)', padding: '3px 8px', borderRadius: 6 }}>● T (523 Hz)</span>
+          <span style={{ color: '#1d4ed8', background: 'rgba(29,78,216,0.08)', padding: '3px 8px', borderRadius: 6 }}>● G (392 Hz)</span>
+          <span style={{ color: '#7e22ce', background: 'rgba(126,34,206,0.08)', padding: '3px 8px', borderRadius: 6 }}>● C (330 Hz)</span>
         </div>
       </div>
 
-      <div className="ag-freq-chart-container" style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        {/* Y Axis Labels */}
-        <div className="ag-y-axis" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 170, fontSize: '0.68rem', fontWeight: 800, color: '#64748b', minWidth: 50 }}>
+      <div className="ag-freq-chart-container" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        {/* Pinned Y Axis Labels */}
+        <div className="ag-y-axis" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: 170, fontSize: '0.62rem', fontWeight: 800, color: '#64748b', minWidth: 44, flexShrink: 0 }}>
           {yTicks.map((v) => (
             <span key={v}>{v}</span>
           ))}
         </div>
 
-        {/* SVG Plot Pane */}
-        <div className="ag-chart-plot" style={{ flex: 1, position: 'relative', borderRadius: 12, background: '#f8fafc', border: '1.5px solid #e2e8f0', overflow: 'visible' }}>
+        {/* Scrollable SVG Plot Pane — guarantees 22px per point so graph never squashes */}
+        <div
+          ref={plotContainerRef}
+          className="ag-chart-plot"
+          style={{
+            flex: 1,
+            position: 'relative',
+            borderRadius: 12,
+            background: '#f8fafc',
+            border: '1.5px solid #e2e8f0',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+          }}
+        >
           <svg
-            width="100%"
+            width={W}
             height="170"
-            viewBox="0 0 1000 170"
-            preserveAspectRatio="none"
+            viewBox={`0 0 ${W} 170`}
             onClick={handleGraphClick}
-            style={{ cursor: 'crosshair', display: 'block' }}
+            style={{ cursor: 'crosshair', display: 'block', minWidth: '100%' }}
           >
             <defs>
               <linearGradient id="freq-interactive-area" x1="0" y1="0" x2="0" y2="1">
@@ -127,7 +159,7 @@ export default function FrequencyGraph() {
 
             {/* Grid */}
             {[35, 70, 105, 140].map((y) => (
-              <line key={y} x1="16" y1={y} x2="984" y2={y} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="5 5" />
+              <line key={y} x1={PADDING.left} y1={y} x2={W - PADDING.right} y2={y} stroke="#e2e8f0" strokeWidth="1" strokeDasharray="5 5" />
             ))}
 
             {/* Fill Area */}
@@ -183,7 +215,7 @@ export default function FrequencyGraph() {
             <div style={{
               position: 'absolute',
               top: hoveredPoint.y - 45,
-              left: Math.min(850, Math.max(20, hoveredPoint.x)),
+              left: Math.min(W - 120, Math.max(20, hoveredPoint.x)),
               background: '#0f172a',
               color: '#ffffff',
               padding: '4px 10px',

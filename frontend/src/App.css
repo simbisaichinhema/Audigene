@@ -1458,8 +1458,8 @@ body {
   /* ── MAIN LAYOUT: Single column stacked ── */
   .ag-main-layout {
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
+    gap: 14px;
+    padding: 12px;
     max-width: 100vw;
     overflow-x: hidden;
   }
@@ -1498,7 +1498,7 @@ body {
   }
 
   .ag-col-center {
-    gap: 8px;
+    gap: 14px;
     max-width: 100%;
     overflow-x: hidden;
   }
@@ -1509,8 +1509,8 @@ body {
 
   /* ── COMPACT CARDS ── */
   .ag-card {
-    padding: 10px;
-    border-radius: 10px;
+    padding: 14px 14px;
+    border-radius: 14px;
     max-width: 100%;
     overflow: hidden;
   }
