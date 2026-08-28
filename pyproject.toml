@@ -30,7 +30,4 @@ include = ["backend*", "bioinformatics*", "sonification*", "api*"]
 testpaths = ["bioinformatics/tests", "sonification/tests", "tests", "backend/tests"]
 pythonpath = ["."]
 
-[tool.vercel]
-entrypoint = "backend.app.main:app"
-
 
