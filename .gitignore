@@ -1,8 +1,30 @@
-node_modules
-.venv
-dist
-build
+# Dependencies
+node_modules/
+frontend/node_modules/
+.venv/
+
+# Build output
+dist/
+frontend/dist/
+build/
+*.tsbuildinfo
+
+# Vercel
+.vercel/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Large / binary files
 *.zip
 *.tar.gz
 *.pdf
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE
+.claude/

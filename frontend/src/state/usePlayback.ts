@@ -8,6 +8,13 @@ import {
 
 export const engine = new AudioEngine()
 
+export type LlmProvider = 'gemini' | 'openrouter' | 'openai' | 'anthropic' | 'google'
+
+export interface LlmCredential {
+  apiKey: string
+  isConnected: boolean
+}
+
 export type ComparisonMode = 'gene_a' | 'gene_b' | 'differences' | 'combined'
 
 interface PlaybackStore {
@@ -34,7 +41,9 @@ interface PlaybackStore {
   llmApiKey: string
   llmProvider: string
   llmConnected: boolean
+  llmCredentials: Record<string, LlmCredential>
   setLlmConfig: (provider: string, apiKey: string, connected: boolean) => void
+  setLlmCredential: (provider: string, apiKey: string, connected: boolean) => void
 
   loadTimeline: (sequence: string, method: string) => Promise<void>
   loadComparisonTimeline: (sequence: string) => Promise<void>
@@ -95,7 +104,17 @@ export const usePlayback = create<PlaybackStore>((set, get) => {
     llmApiKey: '',
     llmProvider: 'anthropic',
     llmConnected: false,
+    llmCredentials: {},
     setLlmConfig: (provider, apiKey, connected) => set({ llmProvider: provider, llmApiKey: apiKey, llmConnected: connected }),
+    setLlmCredential: (provider, apiKey, connected) => set(state => ({
+      llmProvider: provider,
+      llmApiKey: apiKey,
+      llmConnected: connected,
+      llmCredentials: {
+        ...state.llmCredentials,
+        [provider]: { apiKey, isConnected: connected }
+      }
+    })),
 
     initDefaultState: () => {
       const tlA = generateSonificationTimeline(DEFAULT_SEQ_A, 'nucleotide_chroma', 'ref_A')
