@@ -151,6 +151,21 @@ export default function App() {
         )}
       </main>
 
+      {/* ── MOBILE FLOATING ACTION BUTTON — Presets ── */}
+      <button
+        className="ag-mobile-agent-fab"
+        onClick={() => setPresetsDrawerOpen(true)}
+        title="Acoustic Presets"
+        aria-label="Open Acoustic Presets"
+        style={{
+          right: 'auto',
+          left: 16,
+          background: 'linear-gradient(135deg, #2563eb, #0284c7)',
+        }}
+      >
+        🎵
+      </button>
+
       {/* ── MOBILE FLOATING ACTION BUTTON — AI Agent ── */}
       <button
         className="ag-mobile-agent-fab"
